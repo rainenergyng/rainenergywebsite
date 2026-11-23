@@ -1,5 +1,5 @@
-import { useEffect, useState, type ReactNode } from "react";
-import { useLocation } from "@tanstack/react-router";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Link, useLocation } from "@tanstack/react-router";
 import {
   ArrowUpRight,
   ArrowRight,
@@ -27,9 +27,10 @@ import {
   Leaf,
   Award,
   FileCheck2,
+  type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { services, projects, news, stats, images, company, faqs } from "@/data/content";
+import { services, serviceHref, images, company, primaryPhone, faqs } from "@/data/content";
 import {
   Accordion,
   AccordionItem,
@@ -37,13 +38,13 @@ import {
   AccordionContent,
 } from "@/components/ui/accordion";
 
-export const iconMap = {
-  engineering: DraftingCompass,
-  procurement: PackageSearch,
-  fabrication: Wrench,
-  construction: HardHat,
-  commissioning: Gauge,
-  gas: Flame,
+export const iconMap: Record<string, LucideIcon> = {
+  epicc: DraftingCompass,
+  "pipeline-works": Wrench,
+  "civil-structural": HardHat,
+  "electrical-instrumentation": Gauge,
+  "fabrication-distribution": Flame,
+  "operations-maintenance": PackageSearch,
 };
 
 export function RELogoMark({
@@ -63,12 +64,10 @@ export function RELogoMark({
       className={className}
       aria-hidden="true"
     >
-      {/* R Stem & Upper Loop */}
       <path
         d="M16 16H48C59 16 67 24 67 35C67 44.5 60.5 52.5 50.5 54L68 84H52L36 56H28V84H16V16ZM28 28V44H47C52 44 55 40.5 55 36C55 31.5 52 28 47 28H28Z"
         fill={color}
       />
-      {/* Dynamic interlocking E arms & lower diagonal matching R leg angle */}
       <path
         d="M60 20H86V30H60V20ZM56 40H84V50H56V40ZM50 63L63 84H77L64 63H50Z"
         fill={accentColor}
@@ -79,21 +78,24 @@ export function RELogoMark({
 
 export function Wordmark() {
   return (
-    <a href="/" className="brand" aria-label="Rain Energy Limited Home">
+    <Link to="/" className="brand" aria-label="Rain Energy Limited Home">
       <RELogoMark className="w-10 h-10" color="#FFFFFF" accentColor="#C6A15B" />
       <div className="brand-titles">
         <span className="brand-name">RAIN</span>
         <span className="brand-sub">ENERGY LIMITED</span>
       </div>
-    </a>
+    </Link>
   );
 }
+
 const nav: [string, string][] = [
   ["Home", "/"],
   ["About", "/about"],
   ["Services", "/services"],
+  ["HSE & Compliance", "/hse-quality"],
   ["Contact", "/contact"],
 ];
+
 export function QuoteButton({ outline = false }: { outline?: boolean }) {
   return (
     <Button asChild variant={outline ? "lightOutline" : "gold"}>
@@ -103,16 +105,77 @@ export function QuoteButton({ outline = false }: { outline?: boolean }) {
     </Button>
   );
 }
+
+export function Reveal({
+  children,
+  className = "",
+  delay = 0,
+}: {
+  children: ReactNode;
+  className?: string;
+  delay?: number;
+}) {
+  return (
+    <div
+      className={`reveal ${className}`.trim()}
+      style={delay ? { animationDelay: `${delay}ms` } : undefined}
+    >
+      {children}
+    </div>
+  );
+}
+
+export function CountUp({ value, suffix = "" }: { value: number; suffix?: string }) {
+  const [display, setDisplay] = useState(value);
+  const ref = useRef<HTMLSpanElement | null>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let frame = 0;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting) return;
+        io.disconnect();
+        const start = performance.now();
+        const duration = 850;
+        const tick = (now: number) => {
+          const p = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - p, 3);
+          setDisplay(Math.round(value * eased));
+          if (p < 1) frame = requestAnimationFrame(tick);
+        };
+        setDisplay(0);
+        frame = requestAnimationFrame(tick);
+      },
+      { threshold: 0.25 },
+    );
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      cancelAnimationFrame(frame);
+    };
+  }, [value]);
+
+  return (
+    <span ref={ref}>
+      {display}
+      {suffix && <span className="fact-suffix">{suffix}</span>}
+    </span>
+  );
+}
+
 export function Layout({ children }: { children: ReactNode }) {
   const { pathname } = useLocation();
   const [menu, setMenu] = useState(false);
+
   const active = (path: string) =>
     path === "/"
       ? pathname === "/"
-      : pathname === path ||
-        (path === "/services" && pathname === "/service") ||
-        (path === "/projects" && pathname === "/project") ||
-        (path === "/news" && pathname === "/article");
+      : pathname === path || (path === "/services" && pathname.startsWith("/services"));
+
   useEffect(() => {
     if (!menu) return;
     const key = (e: KeyboardEvent) => {
@@ -126,18 +189,19 @@ export function Layout({ children }: { children: ReactNode }) {
       document.body.style.overflow = previous;
     };
   }, [menu]);
+
   return (
     <>
       <div className="utility">
         <div className="container">
           <div className="utility-left">
-            <a href="tel:+2348057699215">
+            <a href={`tel:${primaryPhone.tel}`}>
               <Phone />
-              080 5769 9215
+              {primaryPhone.display}
             </a>
-            <a href="mailto:info@rainenergy.ng">
+            <a href={`mailto:${company.email}`}>
               <Mail />
-              info@rainenergy.ng
+              {company.email}
             </a>
             <span>
               <MapPin />
@@ -145,10 +209,11 @@ export function Layout({ children }: { children: ReactNode }) {
             </span>
           </div>
           <div className="utility-right">
-            Indigenous Excellence in Oil & Gas • 100% Nigerian-Owned • 20+ Years Founder Experience
+            {company.tagline} • 100% Nigerian-Owned • {company.experienceHeadline}
           </div>
         </div>
       </div>
+
       <header className="site-header">
         <div className="container header-inner">
           <Wordmark />
@@ -162,7 +227,7 @@ export function Layout({ children }: { children: ReactNode }) {
                   </a>
                   <div className="dropdown-panel">
                     {services.map((s) => (
-                      <a key={s.slug} href={`/service?s=${s.slug}`}>
+                      <a key={s.slug} href={serviceHref(s.slug)}>
                         {s.name}
                       </a>
                     ))}
@@ -194,6 +259,7 @@ export function Layout({ children }: { children: ReactNode }) {
           </Button>
         </div>
       </header>
+
       {menu && (
         <>
           <div className="drawer-backdrop" onClick={() => setMenu(false)} />
@@ -209,7 +275,12 @@ export function Layout({ children }: { children: ReactNode }) {
             </Button>
             <Wordmark />
             {nav.map(([label, path]) => (
-              <a key={path} href={path} className={active(path) ? "active" : ""}>
+              <a
+                key={path}
+                href={path}
+                className={active(path) ? "active" : ""}
+                onClick={() => setMenu(false)}
+              >
                 {label}
               </a>
             ))}
@@ -217,7 +288,9 @@ export function Layout({ children }: { children: ReactNode }) {
           </nav>
         </>
       )}
+
       <main>{children}</main>
+
       <section className="cta-band">
         <div className="container cta-inner">
           <div>
@@ -228,23 +301,17 @@ export function Layout({ children }: { children: ReactNode }) {
             </h2>
             <p>From an initial idea to a fully operational facility, we’re ready.</p>
           </div>
-          <Button asChild variant="navyOutline">
-            <a href="/contact#quote">
-              Request a quote
-              <ArrowUpRight />
-            </a>
-          </Button>
+          <QuoteButton />
         </div>
       </section>
+
       <footer className="site-footer">
         <div className="container">
           <div className="footer-grid">
             <div>
               <Wordmark />
               <p>
-                Rain Energy Ltd is a fully indigenous Nigerian oil and gas servicing company. 100%
-                Nigerian-owned and powered by skilled indigenous professionals with 20+ years of
-                founding-team experience across the entire energy value chain.
+                {company.whoWeAre[0]} {company.whoWeAre[1]}
               </p>
               <div className="socials">
                 <a
@@ -285,7 +352,7 @@ export function Layout({ children }: { children: ReactNode }) {
               <ul>
                 {services.map((s) => (
                   <li key={s.slug}>
-                    <a href={`/service?s=${s.slug}`}>{s.name}</a>
+                    <a href={serviceHref(s.slug)}>{s.name}</a>
                   </li>
                 ))}
               </ul>
@@ -295,28 +362,30 @@ export function Layout({ children }: { children: ReactNode }) {
               <ul>
                 <li>No. 1 Oba Sijuade Okunade Crescent,</li>
                 <li>Chevy View Estate, Lekki, Lagos</li>
+                {company.phones.map((p) => (
+                  <li key={p.tel}>
+                    <a href={`tel:${p.tel}`}>{p.display}</a>
+                  </li>
+                ))}
                 <li>
-                  <a href="tel:+2348057699215">080 5769 9215</a>
-                </li>
-                <li>
-                  <a href="tel:+2348037414562">080 3741 4562</a>
-                </li>
-                <li>
-                  <a href="mailto:info@rainenergy.ng">info@rainenergy.ng</a>
+                  <a href={`mailto:${company.email}`}>{company.email}</a>
                 </li>
                 <li>Monday – Friday, 8am – 5pm</li>
               </ul>
             </div>
           </div>
           <div className="footer-bottom">
-            <span>© 2026 Rain Energy Limited. All rights reserved.</span>
-            <span>Indigenous Excellence in Oil & Gas Services • West Africa</span>
+            <span>
+              © {company.established} {company.name}. All rights reserved.
+            </span>
+            <span>{company.tagline} • West Africa</span>
           </div>
         </div>
       </footer>
+
       <a
         className="whatsapp"
-        href="https://wa.me/2348057699215"
+        href={`https://wa.me/${primaryPhone.tel.replace(/^\+/, "")}`}
         target="_blank"
         rel="noreferrer"
         aria-label="Chat with Rain Energy on WhatsApp"
@@ -327,17 +396,29 @@ export function Layout({ children }: { children: ReactNode }) {
     </>
   );
 }
+
+export type Crumb = { label: string; to: string };
+
 export function PageHero({
   title,
   description,
   category,
+  crumbs,
   image = images.plant,
 }: {
   title: string;
   description?: string;
   category?: string;
+  crumbs?: Crumb[];
   image?: string;
 }) {
+  const trail: Crumb[] =
+    crumbs !== undefined
+      ? crumbs
+      : category
+        ? [{ label: category, to: `/${category.toLowerCase()}` }]
+        : [];
+
   return (
     <section className="page-hero">
       <img
@@ -351,12 +432,12 @@ export function PageHero({
         <div className="breadcrumb">
           <a href="/">Home</a>
           <ChevronRight />
-          {category && (
-            <>
-              <a href={`/${category.toLowerCase()}`}>{category}</a>
+          {trail.map((c) => (
+            <span key={c.to} className="breadcrumb-step">
+              <a href={c.to}>{c.label}</a>
               <ChevronRight />
-            </>
-          )}
+            </span>
+          ))}
           <span>{title}</span>
         </div>
         <h1>{title}</h1>
@@ -365,6 +446,7 @@ export function PageHero({
     </section>
   );
 }
+
 export function SectionHeading({
   eyebrow,
   title,
@@ -395,17 +477,18 @@ export function SectionHeading({
     </div>
   );
 }
+
 export function ServicesGrid() {
   return (
     <div className="services-grid">
       {services.map((s, i) => {
-        const Icon = iconMap[s.icon as keyof typeof iconMap];
+        const Icon = iconMap[s.slug] ?? DraftingCompass;
         return (
-          <a className="service-card" href={`/service?s=${s.slug}`} key={s.slug}>
+          <a className="service-card" href={serviceHref(s.slug)} key={s.slug}>
             <Icon className="service-icon" strokeWidth={1.4} />
             <span className="card-number">0{i + 1}</span>
             <h3>{s.name}</h3>
-            <p>{s.description}</p>
+            <p>{s.short}</p>
             <span className="text-link">
               Learn more
               <ArrowUpRight />
@@ -416,100 +499,7 @@ export function ServicesGrid() {
     </div>
   );
 }
-export function ProjectCards({ items = projects }: { items?: typeof projects }) {
-  return (
-    <div className="project-grid">
-      {items.map((p) => (
-        <a href={`/project?p=${p.slug}`} className="project-card" key={p.slug}>
-          <div className="project-image">
-            <img src={p.image} alt={p.title} width={1536} height={1024} loading="lazy" />
-            <span className="sample-tag">Sample project</span>
-          </div>
-          <div className="card-body">
-            <div className="category">{services.find((s) => s.slug === p.service)?.name}</div>
-            <h3>{p.title}</h3>
-            <div className="card-bottom">
-              <span>
-                <MapPin />
-                {p.location} · {p.year}
-              </span>
-              <ArrowUpRight />
-            </div>
-          </div>
-        </a>
-      ))}
-    </div>
-  );
-}
-export function NewsCards({ items = news }: { items?: typeof news }) {
-  return (
-    <div className="news-grid">
-      {items.map((n) => (
-        <a href={`/article?n=${n.slug}`} className="news-card" key={n.slug}>
-          <img src={n.image} alt={n.title} width={1536} height={1024} loading="lazy" />
-          <div className="card-body">
-            <div className="date">
-              {n.date}
-              <span className="sample-tag">Sample</span>
-            </div>
-            <h3>{n.title}</h3>
-            <p>{n.summary}</p>
-            <span className="text-link">
-              Read article
-              <ArrowUpRight />
-            </span>
-          </div>
-        </a>
-      ))}
-    </div>
-  );
-}
-export function Stats() {
-  const [animate, setAnimate] = useState(false);
-  const [progress, setProgress] = useState(1);
-  useEffect(() => {
-    const el = document.getElementById("delivery-stats");
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry?.isIntersecting) {
-          setAnimate(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.2 },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-  useEffect(() => {
-    if (!animate || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    let frame = 0;
-    const start = performance.now();
-    const tick = (now: number) => {
-      const p = Math.min((now - start) / 900, 1);
-      setProgress(1 - Math.pow(1 - p, 3));
-      if (p < 1) frame = requestAnimationFrame(tick);
-    };
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
-  }, [animate]);
-  return (
-    <section className="stats" id="delivery-stats" aria-label="Sample company figures">
-      <div className="container stats-grid">
-        {stats.map((s) => (
-          <div className="stat" key={s.label}>
-            <strong>
-              {Math.round(s.value * progress)}
-              <span>{s.suffix}</span>
-            </strong>
-            <p>{s.label}</p>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
+
 export const why = [
   {
     icon: Users,
@@ -532,23 +522,27 @@ export const why = [
     text: "Clear communication and a focus on on-time delivery.",
   },
 ];
+
 export function NotFound({
   kind = "page",
-  href = "/",
+  to,
+  href,
   label = "Back to home",
 }: {
   kind?: string;
+  to?: string;
   href?: string;
   label?: string;
 }) {
+  const target = to ?? href ?? "/";
   return (
     <Layout>
       <section className="not-found container">
         <strong>404</strong>
         <h1>This {kind} couldn’t be found.</h1>
         <p>The link may be incomplete, or the {kind} is no longer available.</p>
-        <Button asChild variant="gold">
-          <a href={href}>
+        <Button asChild variant="navy">
+          <a href={target}>
             {label}
             <ArrowRight />
           </a>
@@ -557,6 +551,7 @@ export function NotFound({
     </Layout>
   );
 }
+
 export function ComplianceGrid() {
   return (
     <div className="compliance-grid">
@@ -565,10 +560,6 @@ export function ComplianceGrid() {
           <div>
             <div className="compliance-badge">{c.code}</div>
             <div className="compliance-val">{c.value}</div>
-          </div>
-          <div className="compliance-desc">
-            <strong className="text-navy">{c.title}</strong>
-            <div>{c.status}</div>
           </div>
         </div>
       ))}
@@ -582,7 +573,6 @@ export function HseFrameworkGrid() {
       {company.hseFramework.map((item) => (
         <div className="hse-framework-card" key={item.code}>
           <span className="hse-step-pill">{item.code}</span>
-          <h4 className="hse-step-title">{item.title}</h4>
           <p className="hse-step-desc">{item.desc}</p>
         </div>
       ))}

@@ -1,16 +1,17 @@
 import { Button } from "@/components/ui/button";
-import { images, sectors } from "@/data/content";
+import { images } from "@/data/content";
 import {
   Layout,
   SectionHeading,
-  ServicesGrid,
   QuoteButton,
+  Reveal,
   why,
   ArrowUpRight,
   ShieldCheck,
   company,
   FaqSection,
 } from "./shared";
+import { FactsBand, HseRail, PipelineSchematic, ServiceExplorer } from "./interactive";
 import { ArrowDown } from "lucide-react";
 
 export function HomePage() {
@@ -34,11 +35,7 @@ export function HomePage() {
             <br />
             with the <span>future of energy.</span>
           </h1>
-          <p>
-            Rain Energy Ltd is a fully indigenous Nigerian oil and gas servicing company. 100%
-            Nigerian-owned and powered by skilled indigenous professionals, delivering proven
-            success from EPIC&C to high-risk pipeline interventions and LPG/CNG distribution.
-          </p>
+          <p>{company.endToEnd}</p>
           <div className="hero-actions">
             <QuoteButton />
             <Button asChild variant="lightOutline">
@@ -52,7 +49,7 @@ export function HomePage() {
         <div className="container hero-bottom">
           <span>
             <ShieldCheck />
-            Safety-First Culture • Expert Leadership • Community Impact
+            {company.commitments.join(" • ")}
           </span>
           <span className="scroll-label">
             Explore our capabilities
@@ -61,40 +58,43 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Core Services Section */}
+      <FactsBand />
+
+      {/* Core Services Explorer */}
       <section className="section">
         <div className="container">
           <SectionHeading
             eyebrow="Our capabilities"
-            title="Comprehensive solutions for the energy sector."
-            description="End-to-end execution across the entire energy value chain — from front-end engineering design to specialized field installations and nationwide gas distribution."
+            title="Six core service lines. One accountable team."
+            href="/services"
+            link="View all services"
           />
-          <ServicesGrid />
+          <ServiceExplorer />
         </div>
       </section>
 
       {/* Why Rain Energy Split */}
       <section className="section section-muted">
         <div className="container split">
-          <img
-            src={images.engineer}
-            alt="Nigerian engineer reviewing energy facility specifications"
-            width={1024}
-            height={1024}
-            loading="lazy"
-          />
-          <div>
+          <Reveal>
+            <img
+              src={images.engineer}
+              alt="Nigerian engineer reviewing energy facility specifications"
+              width={1024}
+              height={1024}
+              loading="lazy"
+            />
+          </Reveal>
+          <Reveal delay={120}>
             <div className="eyebrow">Who We Are</div>
             <h2>
               New company.
               <br />
               20+ years founder expertise.
             </h2>
-            <p>
-              Rain Energy Ltd brings together over two decades of technical leadership in upstream
-              and downstream operations, offering unmatched reliability and flawless execution under
-              strict international standards.
-            </p>
+            {company.whoWeAre.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
             <div className="reasons">
               {why.map((r) => (
                 <div className="reason" key={r.title}>
@@ -110,23 +110,33 @@ export function HomePage() {
               Read our full company story
               <ArrowUpRight />
             </a>
-          </div>
+          </Reveal>
         </div>
       </section>
 
-      {/* Sectors We Serve */}
-      <section className="section">
+      {/* Specialized Pipeline Interventions */}
+      <section className="section dark-band blueprint">
         <div className="container">
-          <div className="eyebrow">Where we work</div>
-          <h2>Sectors we serve.</h2>
-          <div className="sector-grid">
-            {sectors.map((s, i) => (
-              <a href="/services" className="sector" key={s}>
-                <span>0{i + 1}</span>
-                <h3>{s}</h3>
-              </a>
-            ))}
-          </div>
+          <SectionHeading
+            eyebrow="Specialized pipeline works"
+            title="Protecting critical energy infrastructure."
+            href="/services/pipeline-works"
+            link="Explore pipeline works"
+          />
+          <PipelineSchematic />
+        </div>
+      </section>
+
+      {/* HSE Framework Preview */}
+      <section className="section section-muted">
+        <div className="container">
+          <SectionHeading
+            eyebrow="HSE & Compliance"
+            title="Safety is non-negotiable."
+            href="/hse-quality"
+            link="Explore our HSE framework"
+          />
+          <HseRail />
         </div>
       </section>
 
