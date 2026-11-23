@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite dev --host 0.0.0.0 --port 3000",
     "build": "vite build",
+    "build:cloudflare": "NITRO_PRESET=cloudflare-module vite build",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "start": "node .output/server/index.mjs",
@@ -13,7 +14,7 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "deploy": "wrangler deploy --config .output/server/wrangler.json"
+    "deploy": "npx wrangler deploy --config .output/server/wrangler.json"
   },
   "dependencies": {
     "@fontsource-variable/montserrat": "^5.3.0",

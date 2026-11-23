@@ -6,9 +6,24 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
+const nitroPreset =
+  process.env["NITRO_PRESET"] ??
+  (process.env["WORKERS_CI"]
+    ? "cloudflare-module"
+    : process.env["CF_PAGES"]
+      ? "cloudflare-pages"
+      : "node-server");
+
 export default defineConfig({
   nitro: {
-    preset: "node-server",
+    preset: nitroPreset,
+    cloudflare: {
+      deployConfig: true,
+      nodeCompat: true,
+      wrangler: {
+        name: "rainenergywebsite",
+      },
+    },
   },
   vite: {
     server: {
