@@ -12,7 +12,6 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { SITE_URL } from "../data/content";
 
 function NotFoundComponent() {
   return (
@@ -74,42 +73,37 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
   );
 }
 
-const orgJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "Rain Energy Limited",
-  url: SITE_URL,
-  logo: `${SITE_URL}/logo-512.png`,
-  description:
-    "Rain Energy Ltd is a fully indigenous Nigerian oil and gas servicing company, 100% Nigerian-owned and built on 20+ years of founding-team experience.",
-  email: "info@rainenergy.ng",
-  telephone: ["+2348057699215", "+2348037414562"],
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: "No. 1 Oba Sijuade Okunade Crescent, Chevy View Estate, Lekki",
-    addressLocality: "Lagos",
-    addressCountry: "NG",
-  },
-};
-
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { name: "theme-color", content: "#0B1F33" },
+      { title: "Rain Energy" },
+      {
+        name: "description",
+        content:
+          "Corporate website for Rain Energy showcasing engineering, fabrication, pipeline, and energy services.",
+      },
+      { property: "og:title", content: "Rain Energy" },
+      {
+        property: "og:description",
+        content:
+          "Corporate website for Rain Energy showcasing engineering, fabrication, pipeline, and energy services.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { property: "og:site_name", content: "Rain Energy" },
-      { property: "og:locale", content: "en_NG" },
     ],
     links: [
-      { rel: "stylesheet", href: appCss },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap",
+      },
+      {
+        rel: "stylesheet",
+        href: appCss,
+      },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
-      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
-    ],
-    scripts: [
-      // Lets the scroll-reveal styles apply only when JavaScript is running.
-      { children: "document.documentElement.classList.add('js')" },
-      { type: "application/ld+json", children: JSON.stringify(orgJsonLd) },
     ],
   }),
   shellComponent: RootShell,
@@ -120,7 +114,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <head>
         <HeadContent />
       </head>

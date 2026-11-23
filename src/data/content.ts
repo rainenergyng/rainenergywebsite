@@ -182,6 +182,46 @@ export const facts = [
 
 export const OG_IMAGE = "/og-image.jpg";
 
+export const faqs = [
+  {
+    question: "What does Rain Energy's EPIC&C delivery model encompass?",
+    category: "Engineering & EPIC&C",
+    answer:
+      "Our EPIC&C (Engineering, Procurement, Installation, Construction & Commissioning) model provides turnkey, single-point accountability across the energy lifecycle. We manage everything from front-end engineering design (FEED) and detailed 3D piping modeling to certified material procurement, yard fabrication, specialized field installation, and final pre-commissioning handover.",
+  },
+  {
+    question: "What specialized pipeline intervention techniques do you provide?",
+    category: "Pipeline Services",
+    answer:
+      "We specialize in high-risk, critical pipeline interventions including Hot Tapping (live branch connections without process shutdowns), Stopple plugging for line isolation, high-pressure mechanical repair clamps for fast leak containment, cofferdams for dry work-zones in flooded or swamp terrains, and Horizontal Directional Drilling (HDD) for river, canal, and highway crossings.",
+  },
+  {
+    question: "Can Rain Energy execute production facility and flow station upgrades?",
+    category: "Facilities & E&I",
+    answer:
+      "Yes. Our engineering division delivers turnkey upgrades for flow stations, gas receiving manifolds, compressor stations, pressure vessels, rotating machinery alignment, Delta-V DCS upgrades, and custody transfer fiscal metering skids under rigorous safety standards.",
+  },
+  {
+    question: "How does Rain Energy ensure material traceability and procurement quality?",
+    category: "Procurement",
+    answer:
+      "All sourced valves, line pipe, and specialized equipment undergo strict vendor qualification and third-party inspection (TPI). We provide 100% mill test certificates (MTCs), oversee factory acceptance tests (FAT), and manage seamless customs clearance and nationwide freight logistics.",
+  },
+  {
+    question:
+      "What capabilities do you offer in gas distribution and energy transition (LPG & CNG)?",
+    category: "Gas Infrastructure",
+    answer:
+      "We design, fabricate, and install LPG storage bullet plants, bottling carousel lines, and mother-daughter CNG compression and refueling stations. We also support nationwide distribution logistics through certified tanker fleets, helping advance Nigeria's transition to cleaner transport fuels.",
+  },
+  {
+    question: "How is HSE and environmental protection governed on Rain Energy projects?",
+    category: "HSE & Governance",
+    answer:
+      "Safety is non-negotiable. Every project operates under our 5-Stage CASHES framework: COMPLY (statutory alignment), PLAN (integrated CASHES standards), ANALYZE (job hazard analysis & proactive barrier controls), CERTIFY (mandatory medical clearance before site admission), and PROTECT (workforce welfare & environmental protection).",
+  },
+];
+
 export function pageHead(title: string, description: string, path: string) {
   const url = `${SITE_URL}${path === "/" ? "" : path}`;
   const full = `${title} | ${company.name}`;
