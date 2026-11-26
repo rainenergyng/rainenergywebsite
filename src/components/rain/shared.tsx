@@ -345,6 +345,15 @@ export function Layout({ children }: { children: ReactNode }) {
                       <a href={path}>{label}</a>
                     </li>
                   ))}
+                <li>
+                  <a
+                    href="https://premium58.web-hosting.com:2096"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Webmail
+                  </a>
+                </li>
               </ul>
             </div>
             <div>
