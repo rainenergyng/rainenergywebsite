@@ -47,43 +47,16 @@ export const iconMap: Record<string, LucideIcon> = {
   "operations-maintenance": PackageSearch,
 };
 
-export function RELogoMark({
-  className = "w-9 h-9",
-  color = "#FFFFFF",
-  accentColor = "#C6A15B",
-}: {
-  className?: string;
-  color?: string;
-  accentColor?: string;
-}) {
-  return (
-    <svg
-      viewBox="0 0 100 100"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-      aria-hidden="true"
-    >
-      <path
-        d="M16 16H48C59 16 67 24 67 35C67 44.5 60.5 52.5 50.5 54L68 84H52L36 56H28V84H16V16ZM28 28V44H47C52 44 55 40.5 55 36C55 31.5 52 28 47 28H28Z"
-        fill={color}
-      />
-      <path
-        d="M60 20H86V30H60V20ZM56 40H84V50H56V40ZM50 63L63 84H77L64 63H50Z"
-        fill={accentColor}
-      />
-    </svg>
-  );
-}
-
 export function Wordmark() {
   return (
     <Link to="/" className="brand" aria-label="Rain Energy Limited Home">
-      <RELogoMark className="w-10 h-10" color="#FFFFFF" accentColor="#C6A15B" />
-      <div className="brand-titles">
-        <span className="brand-name">RAIN</span>
-        <span className="brand-sub">ENERGY LIMITED</span>
-      </div>
+      <img
+        src="/assets/aistudio/RainEnergy_Logo_11f86af6.png"
+        alt="Rain Energy Limited"
+        width={472}
+        height={80}
+        className="brand-logo"
+      />
     </Link>
   );
 }

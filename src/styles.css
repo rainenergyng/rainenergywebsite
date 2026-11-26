@@ -298,8 +298,9 @@ p {
   letter-spacing: 1px;
 }
 .site-header {
-  background: var(--navy);
-  color: var(--white);
+  background: var(--white);
+  color: var(--navy);
+  border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
   z-index: 40;
@@ -312,38 +313,32 @@ p {
   gap: 24px;
 }
 .brand {
-  display: flex;
-  gap: 12px;
+  display: inline-flex;
   align-items: center;
-  color: var(--white);
+  width: fit-content;
+  max-width: 100%;
+  background: var(--white);
+  padding: 8px 14px;
+  border-radius: 6px;
   text-decoration: none;
-  white-space: nowrap;
+  flex-shrink: 0;
 }
-.brand svg {
-  width: 38px;
-  height: 38px;
+.site-header .brand {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
 }
-.brand-titles {
-  display: flex;
-  flex-direction: column;
+.brand-logo {
+  display: block;
+  height: 36px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  background: transparent;
 }
-.brand-name {
-  font-family: "Montserrat", sans-serif;
-  font-size: 19px;
-  font-weight: 800;
-  letter-spacing: 0.04em;
+.site-header .rain-button-gold:hover {
+  background: var(--navy);
   color: var(--white);
-  line-height: 1;
-}
-.brand-sub {
-  font-family: "Montserrat", sans-serif;
-  font-size: 8px;
-  letter-spacing: 0.28em;
-  color: var(--sand-gold);
-  font-weight: 600;
-  margin-top: 4px;
-  line-height: 1;
-  text-transform: uppercase;
 }
 .desktop-nav {
   display: flex;
@@ -359,9 +354,14 @@ p {
   align-items: center;
   gap: 5px;
   height: 100%;
+  color: var(--navy);
+}
+.nav-link:hover {
+  color: var(--tone);
 }
 .nav-link.active {
-  color: var(--gold);
+  color: var(--navy);
+  font-weight: 700;
 }
 .nav-link.active:after {
   content: "";
@@ -406,7 +406,7 @@ p {
 }
 .menu-button {
   display: none;
-  color: var(--white);
+  color: var(--navy);
 }
 .mobile-nav {
   display: none;
@@ -1246,8 +1246,8 @@ p {
     gap: 16px;
     font-size: 10px;
   }
-  .brand {
-    font-size: 17px;
+  .brand-logo {
+    height: 32px;
   }
   .header-inner {
     gap: 16px;
@@ -1285,6 +1285,7 @@ p {
     bottom: 0;
     width: min(340px, 90vw);
     background: var(--navy);
+    color: var(--white);
     padding: 25px;
     flex-direction: column;
     gap: 20px;
@@ -1393,7 +1394,10 @@ p {
     height: 72px;
   }
   .brand {
-    font-size: 18px;
+    padding: 6px 10px;
+  }
+  .brand-logo {
+    height: 26px;
   }
   .home-hero {
     min-height: 620px;
